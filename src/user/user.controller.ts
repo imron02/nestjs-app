@@ -3,6 +3,8 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -16,10 +18,10 @@ import { UserService } from './user.service';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(): Promise<User[]> {
     return this.userService.findAll();
@@ -31,7 +33,20 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    try {
+      return await this.userService.create(createUserDto);
+    } catch (error) {
+      if (error.code == 'ER_DUP_ENTRY') {
+        throw new HttpException(
+          error?.message || 'Data already exist',
+          HttpStatus.CONFLICT,
+        );
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
