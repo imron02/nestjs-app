@@ -38,7 +38,6 @@ export class UserService {
     const user = this.userRepository.create({
       ...userDetails,
       password,
-      createdAt: new Date(),
     });
     return this.userRepository.save(user);
   }
