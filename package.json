@@ -20,7 +20,12 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
-    "checker": "pnpm lint && pnpm tsc"
+    "checker": "pnpm lint && pnpm tsc",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "migration:run": "pnpm typeorm migration:run -d ./db/data-source",
+    "migration:generate": "pnpm run typeorm -d ./db/data-source migration:generate",
+    "migration:create": "pnpm run typeorm -- migration:create",
+    "migration:revert": "pnpm run typeorm -d ./db/data-source migration:revert"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",

@@ -11,9 +11,9 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/dto/CreateUser.dto';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { User } from 'src/typeorm/entities/user.entity';
+import { User } from 'src/user/entities/user.entity';
+import { CreateUserDto } from './dto/CreateUser.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -44,10 +44,7 @@ export class UserController {
           HttpStatus.CONFLICT,
         );
       }
-      throw new HttpException(
-        'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
